@@ -14,7 +14,7 @@
 # under the License.
 #
 
-from ..utils import puts, colored, indent
+from ..utils import puts, Colored, indent
 
 # We are inheriting the primitive types in order to add the ability to set an attribute (_locator) on them.
 
@@ -97,9 +97,9 @@ class Locator(object):
 
     def dump(self, key=None):
         if key:
-            puts('%s "%s":%d:%d' % (colored.red(key), colored.blue(self.location), self.line, self.column))
+            puts('%s "%s":%d:%d' % (Colored.red(key), Colored.blue(self.location), self.line, self.column))
         else:
-            puts('"%s":%d:%d' % (colored.blue(self.location), self.line, self.column))
+            puts('"%s":%d:%d' % (Colored.blue(self.location), self.line, self.column))
         if isinstance(self.children, list):
             with indent(2):
                 for l in self.children:

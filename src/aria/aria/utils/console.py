@@ -26,7 +26,7 @@ class ColoredString(_ColoredString):
 def puts(str='', newline=True, stream=STDOUT):
     _puts(safe_str(str), newline, stream)
 
-class colored():
+class Colored(object):
     @staticmethod
     def black(string, always=False, bold=False):
         return ColoredString('BLACK', string, always_color=always, bold=bold)

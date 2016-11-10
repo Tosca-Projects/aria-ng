@@ -13,13 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from clint.textui import indent
+
 from .uris import as_file
 from .openclose import OpenClose
 from .rest_client import call_rest
 from .argparse import ArgumentParser
 from .console import (puts,
-                      colored)
-from ..consumption.style import indent
+                      Colored)
 from .caching import (cachedmethod,
                       HasCachedMethods)
 from .imports import (import_fullname,
@@ -97,7 +98,7 @@ __all__ = (
     'as_file',
     'ArgumentParser',
     'puts',
-    'colored',
+    'Colored',
     'indent',
     'RestServer',
     'RestRequestHandler',

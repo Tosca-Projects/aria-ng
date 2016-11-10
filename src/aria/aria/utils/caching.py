@@ -13,13 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from functools import partial
+from __future__ import absolute_import # so we can import standard 'collections' and 'threading'
 
 from threading import Lock
+from functools import partial
 from collections import OrderedDict
 
 
-class cachedmethod(object):
+
+class cachedmethod(object): # pylint: disable=invalid-name
     """
     Decorator for caching method return values.
 
@@ -63,14 +65,7 @@ class cachedmethod(object):
             return self.func(*args, **kwargs)
 
         instance = args[0]
-
-        try:
-            cache = instance._method_cache
-        except AttributeError:
-            instance._method_cache = {}
-            # Note: Another thread may override it here, so we need to read it again
-            # to make sure all threads are using the same cache
-            cache = instance._method_cache
+        cache = instance.get_method_cache()
 
         key = (self.func, args[1:], frozenset(kwargs.items()))
 
@@ -93,6 +88,12 @@ class HasCachedMethods(object):
     """
     Provides convenience methods for working with :class:`cachedmethod`.
     """
+
+    def __init__(self, method_cache=None):
+        self._method_cache = method_cache or {}
+
+    def get_method_cache(self):
+        return self._method_cache
 
     @property
     def _method_cache_info(self):

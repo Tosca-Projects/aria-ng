@@ -13,15 +13,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import absolute_import # so we can import standard 'collections'
+
 import os
 import re
 import shutil
 import json
 import sys
 import BaseHTTPServer
-from ..utils import (puts,
-                     colored)
 from collections import OrderedDict
+
+from ..utils import (puts,
+                     Colored)
 
 class RestServer(object):
     """
@@ -66,7 +69,7 @@ class RestServer(object):
     If you want to write the response yourself, set :code:`handled=True` on the
     :class:`RestRequestHandler`, which will cause the return value to be ignored (you won't have to
     return anything). If all you want to do is send an error message, then use
-    :code:`send_plain_text_response`. 
+    :code:`send_plain_text_response`.
 
     If you raise an (uncaught) exception, then a 500 error will be generated with the exception
     message.
@@ -101,12 +104,12 @@ class RestServer(object):
         if daemon:
             print 'Running HTTP server daemon at port %d' % self.port
         else:
-            puts(colored.red('Running HTTP server at port %d, use CTRL-C to exit' % self.port))
+            puts(Colored.red('Running HTTP server at port %d, use CTRL-C to exit' % self.port))
         try:
             http_server.serve_forever()
         except KeyboardInterrupt:
             pass
-        puts(colored.red('Stopping HTTP server'))
+        puts(Colored.red('Stopping HTTP server'))
         http_server.server_close()
 
 class RestRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
@@ -175,6 +178,7 @@ class RestRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             self.send_plain_text_response(404, 'Not found\n')
         return
 
+    # pylint: disable=too-many-return-statements
     def handle_method(self, method):
         self.matched_re, self.matched_route = self.match_route()
 
@@ -222,8 +226,10 @@ class RestRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         else:
             self.wfile.write(content)
 
-    # BaseHTTPRequestHandler
+    # pylint: enable=too-many-return-statements
 
+    # BaseHTTPRequestHandler
+    # pylint: disable=invalid-name
     def do_HEAD(self):
         self.handle_method('HEAD')
 
@@ -238,6 +244,7 @@ class RestRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
     def do_DELETE(self):
         self.handle_method('DELETE')
+    # pylint: enable=invalid-name
 
 #
 # Utils

@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import absolute_import # so we can import standard 'collections'
+
 import json
 from types import MethodType
 from collections import OrderedDict
@@ -39,22 +41,27 @@ yaml.representer.RoundTripRepresenter.add_representer(
 yaml.representer.RoundTripRepresenter.add_representer(
     OrderedDict, yaml.representer.RoundTripRepresenter.represent_dict)
 
+
 class JsonAsRawEncoder(json.JSONEncoder):
     """
     A :class:`JSONEncoder` that will use the :code:`as_raw` property of objects
     if available.
     """
-
-    def default(self, o):
+    def my_default(self, obj):
         try:
-            return iter(o)
+            return iter(obj)
         except TypeError:
-            if hasattr(o, 'as_raw'):
-                return as_raw(o)
-            return str(o)
-        return super(JsonAsRawEncoder, self).default(self, o)
+            if hasattr(obj, 'as_raw'):
+                return as_raw(obj)
+            return str(obj)
+        return super(JsonAsRawEncoder, self).default(obj)
 
-class YamlAsRawDumper(yaml.dumper.RoundTripDumper):
+    def __init__(self, *args, **kwargs):
+        kwargs['default'] = self.my_default
+        super(JsonAsRawEncoder, self).__init__(*args, **kwargs)
+
+
+class YamlAsRawDumper(yaml.dumper.RoundTripDumper): # pylint: disable=too-many-ancestors
     """
     A :class:`RoundTripDumper` that will use the :code:`as_raw` property of objects
     if available.
@@ -64,6 +71,7 @@ class YamlAsRawDumper(yaml.dumper.RoundTripDumper):
         if hasattr(data, 'as_raw'):
             data = as_raw(data)
         return super(YamlAsRawDumper, self).represent_data(data)
+
 
 def full_type_name(value):
     """
@@ -76,6 +84,7 @@ def full_type_name(value):
     name = str(value.__name__)
     return name if module == '__builtin__' else '%s.%s' % (module, name)
 
+
 def safe_str(value):
     """
     Like :code:`str` coercion, but makes sure that Unicode strings are properly
@@ -87,6 +96,7 @@ def safe_str(value):
     except UnicodeEncodeError:
         return unicode(value).encode('utf8')
 
+
 def safe_repr(value):
     """
     Like :code:`repr`, but calls :code:`as_raw` and :code:`as_agnostic` first.
@@ -94,12 +104,14 @@ def safe_repr(value):
 
     return repr(as_agnostic(as_raw(value)))
 
+
 def string_list_as_string(strings):
     """
     Nice representation of a list of strings.
     """
 
     return ', '.join('"%s"' % safe_str(v) for v in strings)
+
 
 def as_raw(value):
     """
@@ -121,6 +133,7 @@ def as_raw(value):
             value[k] = as_raw(v)
     return value
 
+
 def as_raw_list(value):
     """
     Assuming value is a list, converts its values using :code:`as_raw`.
@@ -132,6 +145,7 @@ def as_raw_list(value):
         value = value.itervalues()
     return [as_raw(v) for v in value]
 
+
 def as_raw_dict(value):
     """
     Assuming value is a dict, converts its values using :code:`as_raw`.
@@ -142,6 +156,7 @@ def as_raw_dict(value):
         return OrderedDict()
     return OrderedDict((
         (k, as_raw(v)) for k, v in value.iteritems()))
+
 
 def as_agnostic(value):
     """
@@ -170,6 +185,7 @@ def as_agnostic(value):
 
     return value
 
+
 def json_dumps(value, indent=2):
     """
     JSON dumps that supports Unicode and the :code:`as_raw` property of objects
@@ -178,6 +194,7 @@ def json_dumps(value, indent=2):
 
     return json.dumps(value, indent=indent, ensure_ascii=False, cls=JsonAsRawEncoder)
 
+
 def yaml_dumps(value, indent=2):
     """
     YAML dumps that supports Unicode and the :code:`as_raw` property of objects
@@ -185,6 +202,7 @@ def yaml_dumps(value, indent=2):
     """
 
     return yaml.dump(value, indent=indent, allow_unicode=True, Dumper=YamlAsRawDumper)
+
 
 def yaml_loads(value):
     return yaml.load(value, Loader=yaml.SafeLoader)

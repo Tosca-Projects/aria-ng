@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
+from __future__ import absolute_import # so we can import standard 'collections'
 
 from collections import OrderedDict
 from ..utils import full_type_name

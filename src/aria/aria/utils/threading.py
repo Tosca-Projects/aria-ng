@@ -52,7 +52,7 @@ class DaemonThread(Thread):
         except SystemExit as e:
             # This exception should be bubbled up
             raise e
-        except:
+        except BaseException:
             # Exceptions might occur in daemon threads during interpreter shutdown
             pass
 

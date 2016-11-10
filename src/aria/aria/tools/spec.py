@@ -20,7 +20,7 @@ from .utils import BaseArgumentParser
 from ..utils import (print_exception,
                      import_modules,
                      puts,
-                     colored,
+                     Colored,
                      indent)
 from .. import (install_aria_extensions,
                 DSL_SPECIFICATION_PACKAGES,
@@ -51,13 +51,13 @@ def main():
 
         else:
             for spec in sorted(DSL_SPECIFICATION):
-                puts(colored.cyan(spec))
+                puts(Colored.cyan(spec))
                 with indent(2):
                     for section, details in iter_spec(spec):
-                        puts(colored.blue(section))
+                        puts(Colored.blue(section))
                         with indent(2):
                             for k, v in details.iteritems():
-                                puts('%s: %s' % (colored.magenta(k), v))
+                                puts('%s: %s' % (Colored.magenta(k), v))
 
     except Exception as e:
         print_exception(e)

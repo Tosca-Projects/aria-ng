@@ -13,18 +13,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .. import install_aria_extensions
-from ..utils import (print_exception,
-                     import_fullname)
-from .utils import (CommonArgumentParser,
-                    create_context_from_namespace)
-from ..consumption import (ConsumerChain,
-                           Read,
-                           Validate,
-                           Model,
-                           Types,
-                           Inputs,
-                           Instance)
+from aria import install_aria_extensions
+from aria.utils import (print_exception,
+                        import_fullname)
+from aria.tools.utils import (CommonArgumentParser,
+                              create_context_from_namespace)
+from aria.consumption import (ConsumerChain,
+                              Read,
+                              Validate,
+                              Model,
+                              Types,
+                              Inputs,
+                              Instance)
 
 class ArgumentParser(CommonArgumentParser):
     def __init__(self):

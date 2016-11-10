@@ -16,7 +16,7 @@
 from __future__ import absolute_import # so we can import standard 'daemon'
 
 try:
-    from .console import puts, colored
+    from .console import puts, Colored
     from daemon import DaemonContext
     from daemon.pidfile import TimeoutPIDLockFile
     from daemon.runner import is_pidfile_stale
@@ -31,40 +31,40 @@ try:
         if pidfile.is_locked():
             pid = pidfile.read_pid()
             if pid is not None:
-                puts(colored.red('Already running at pid: %d' % pid))
+                puts(Colored.red('Already running at pid: %d' % pid))
             else:
-                puts(colored.red('Already running'))
+                puts(Colored.red('Already running'))
             return None
         logfile = open(log_path, 'w+t')
-        puts(colored.blue('Starting'))
+        puts(Colored.blue('Starting'))
         return DaemonContext(pidfile=pidfile, stdout=logfile, stderr=logfile)
 
     def stop_daemon(pidfile_path, acquire_timeout=5):
         pidfile = TimeoutPIDLockFile(pidfile_path, acquire_timeout=acquire_timeout)
         pid = pidfile.read_pid()
         if pid is not None:
-            puts(colored.blue('Stopping pid: %d' % pid))
+            puts(Colored.blue('Stopping pid: %d' % pid))
             os.kill(pid, signal.SIGTERM)
             while pidfile.is_locked():
-                puts(colored.cyan('Waiting...'))
+                puts(Colored.cyan('Waiting...'))
                 sleep(0.1)
-            puts(colored.blue('Stopped'))
+            puts(Colored.blue('Stopped'))
         else:
-            puts(colored.red('Not running'))
+            puts(Colored.red('Not running'))
 
     def status_daemon(pidfile_path, acquire_timeout=5):
         pid = TimeoutPIDLockFile(pidfile_path, acquire_timeout=acquire_timeout).read_pid()
         if pid is not None:
-            puts(colored.blue('Running at pid: %d' % pid))
+            puts(Colored.blue('Running at pid: %d' % pid))
         else:
-            puts(colored.blue('Not running'))
+            puts(Colored.blue('Not running'))
 
 except ImportError:
-    def start_daemon(pidfile_path, log_path, acquire_timeout=5):
-        puts(colored.red('Cannot start daemon in this environment'))
+    def start_daemon(*args, **kwargs):
+        puts(Colored.red('Cannot start daemon in this environment'))
 
-    def stop_daemon(pidfile_path, acquire_timeout=5):
-        puts(colored.red('Not running'))
+    def stop_daemon(*args, **kwargs):
+        puts(Colored.red('Not running'))
 
-    def status_daemon(pidfile_path, acquire_timeout=5):
-        puts(colored.blue('Not running'))
+    def status_daemon(*args, **kwargs):
+        puts(Colored.blue('Not running'))

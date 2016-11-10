@@ -36,7 +36,7 @@ from ..utils import (RestServer,
                      stop_daemon,
                      status_daemon,
                      puts,
-                     colored)
+                     Colored)
 
 VALIDATE_PATH = 'validate'
 INDIRECT_VALIDATE_PATH = 'indirect/validate'
@@ -46,8 +46,6 @@ INSTANCE_PATH = 'instance'
 INDIRECT_INSTANCE_PATH = 'indirect/instance'
 
 DEFAULT_PORT = 8080
-
-arguments = None
 
 #
 # Utils
@@ -69,7 +67,7 @@ def parse_path(handler):
 def parse_indirect_payload(handler):
     try:
         payload = handler.json_payload
-    except:
+    except BaseException:
         handler.send_plain_text_response(400, 'Payload is not JSON\n')
         return None, None
 
@@ -80,7 +78,7 @@ def parse_indirect_payload(handler):
 
     try:
         uri = payload['uri']
-    except:
+    except BaseException:
         handler.send_plain_text_response(400, 'Payload does not have required "uri" field\n')
         return None, None
 
@@ -265,7 +263,7 @@ def main():
             elif arguments.command == 'status':
                 status_daemon(pidfile_path)
             else:
-                puts(colored.red('Unknown command: %s' % arguments.command))
+                puts(Colored.red('Unknown command: %s' % arguments.command))
         else:
             rest_server.start()
 

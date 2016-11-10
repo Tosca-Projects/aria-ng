@@ -52,7 +52,7 @@ class MethodRequest(urllib2.Request):
             del kwargs['method']
         else:
             self._method = None
-        return urllib2.Request.__init__(self, *args, **kwargs)
+        urllib2.Request.__init__(self, *args, **kwargs)
 
     def get_method(self, *args, **kwargs):
         return self._method if self._method is not None else urllib2.Request.get_method(

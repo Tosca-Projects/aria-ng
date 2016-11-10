@@ -16,9 +16,9 @@
 import sys
 import linecache
 
+from clint.textui import indent
 from .console import (puts,
-                      colored)
-from ..consumption.style import indent
+                      Colored)
 
 
 def print_exception(e, full=True, cause=False, traceback=None):
@@ -26,8 +26,8 @@ def print_exception(e, full=True, cause=False, traceback=None):
     Prints the exception with nice colors and such.
     """
     def format_heading(e):
-        return '%s%s: %s' % (colored.red('Caused by ') if cause else '', colored.red(
-            e.__class__.__name__, bold=True), colored.red(e))
+        return '%s%s: %s' % (Colored.red('Caused by ') if cause else '', Colored.red(
+            e.__class__.__name__, bold=True), Colored.red(e))
 
     puts(format_heading(e))
     if full:
@@ -54,12 +54,12 @@ def print_traceback(traceback=None):
         filename = code.co_filename
         name = code.co_name
         with indent(2):
-            puts('File "%s", line %s, in %s' % (colored.blue(filename),
-                                                colored.cyan(lineno),
-                                                colored.cyan(name)))
+            puts('File "%s", line %s, in %s' % (Colored.blue(filename),
+                                                Colored.cyan(lineno),
+                                                Colored.cyan(name)))
             linecache.checkcache(filename)
             line = linecache.getline(filename, lineno, frame.f_globals)
             if line:
                 with indent(2):
-                    puts(colored.black(line.strip()))
+                    puts(Colored.black(line.strip()))
         traceback = traceback.tb_next

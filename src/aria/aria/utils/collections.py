@@ -88,12 +88,12 @@ class FrozenDict(OrderedDict):
         super(FrozenDict, self).__init__(*args, **kwargs)
         self.locked = True
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key, value, **_):
         if self.locked:
             raise TypeError('frozen dict')
         return super(FrozenDict, self).__setitem__(key, value)
 
-    def __delitem__(self, key):
+    def __delitem__(self, key, **_):
         if self.locked:
             raise TypeError('frozen dict')
         return super(FrozenDict, self).__delitem__(key)
@@ -193,7 +193,7 @@ class StrictDict(OrderedDict):
             value = self.unwrapper_fn(value)
         return value
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key, value, **_):
         if (self.key_class is not None) and (not isinstance(key, self.key_class)):
             raise TypeError('key must be a "%s": %s' % (cls_name(self.key_class), repr(key)))
         if (self.value_class is not None) and (not isinstance(value, self.value_class)):
@@ -225,7 +225,7 @@ def merge(dict_a, dict_b, path=None, strict=False):
             dict_a[key] = value_b
     return dict_a
 
-def is_removable(container, k, v):
+def is_removable(_container, _key, v):
     return (v is None) or ((isinstance(v, dict) or isinstance(v, list)) and (len(v) == 0))
 
 def prune(value, is_removable_fn=is_removable):
